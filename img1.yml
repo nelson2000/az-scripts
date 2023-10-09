@@ -1,0 +1,512 @@
+
+
+# trigger: none 
+
+
+# pool:
+#   vmImage: ubuntu-latest
+
+# # variables:
+# #   imagerg: 'rg-image-development'
+# #   location: canadacentral
+# #   additionalregion: eastus
+# #   vnetRgName: 'rg-vnet-development-02'
+# #   identityName: saasImageiden01
+ 
+
+# # parameters:
+# # - name: imagerolename
+# #   displayName: 'Image Role Name'
+# #   type: string
+# #   default: 'Image-builder-1'  # Default value (you can change it)
+# #   values:
+# #     - 'Image-builder-1'
+# #     - 'Image-builder-2'
+# #     - 'Image-builder-3'
+# # - name: netrolename
+# #   displayName: 'Vnet Role Name'
+# #   type: string
+# #   default: 'net-image-1'  # Default value (you can change it)
+# #   values:
+# #     - 'net-image-1'
+# #     - 'net-image-2'
+# #     - 'net-image-3'
+ 
+
+
+# jobs:
+# # - job: RoleAssignments
+# #   pool:
+# #     vmImage: 'ubuntu-latest'
+# #   steps:
+# #   - bash: |
+  
+# #       imageResourceGroup=rg-image-development
+# #       location=canadacentral
+# #       imageName=customImageU2204
+# #       runOutputName=aibCustLinManImg01ro
+# #       vnetName=vnetsbx-spoke02
+# #       subnetName=imgbuilder-subnet
+# #       vnetRgName=rg-vnet-development-02
+# #       nsgName=saasNSG01
+
+# #       # create resource group for image and image template resource
+     
+# #       az login --service-principal -u $(azure_client_id) -p $(azure_client_secret) --tenant $(azure_tenant_id)
+# #       subscriptionID="$(az account list --query "[?name=='SBX Data Ecosystem-11'].id" --output tsv)"
+# #       az account set --subscription $subscriptionID
+# #       # az group create -n $imageResourceGroup -l $location
+# #       # az group create -n $vnetRgName -l $location
+# #       # az network vnet create \
+# #       #   --resource-group $vnetRgName \
+# #       #   --name $vnetName --address-prefix 10.0.0.0/16 \
+# #       #   --subnet-name $subnetName --subnet-prefix 10.0.0.0/24
+
+# #       # ## create base NSG to simulate an existing NSG
+# #       # az network nsg create -g $vnetRgName -n $nsgName
+
+# #       # az network vnet subnet update \
+# #       #   --resource-group $vnetRgName \
+# #       #   --vnet-name $vnetName \
+# #       #   --name $subnetName \
+# #       #   --network-security-group $nsgName
+
+# #       # az network nsg rule create \
+# #       #   --resource-group $vnetRgName \
+# #       #   --nsg-name $nsgName \
+# #       #   -n AzureImageBuilderNsgRule \
+# #       #   --priority 400 \
+# #       #   --source-address-prefixes AzureLoadBalancer \
+# #       #   --destination-address-prefixes VirtualNetwork \
+# #       #   --destination-port-ranges 60000-60001 --direction inbound \
+# #       #   --access Allow --protocol Tcp \
+# #       #   --description "Allow Image Builder Private Link Access to Proxy VM"
+
+# #       # az network vnet subnet update \
+# #       #   --name $subnetName \
+# #       #   --resource-group $vnetRgName \
+# #       #   --vnet-name $vnetName \
+# #       #   --disable-private-link-service-network-policies true 
+      
+# #       curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/existingVNETLinux.json -o main.json
+# #       curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleNetworking.json -o aib-net.json
+# #       curl https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/solutions/12_Creating_AIB_Security_Roles/aibRoleImageCreation.json -o aib-img.json
+
+#       # sed -i -e "s/<subscriptionID>/$subscriptionID/g" main.json
+#       # sed -i -e "s/<rgName>/$imageResourceGroup/g" main.json
+#       # sed -i -e "s/<region>/$location/g" main.json
+#       # sed -i -e "s/<imageName>/$imageName/g" main.json
+#       # sed -i -e "s/<runOutputName>/$runOutputName/g" main.json
+
+#       # sed -i -e "s/<vnetName>/$vnetName/g" main.json
+#       # sed -i -e "s/<subnetName>/$subnetName/g" main.json
+#       # sed -i -e "s/<vnetRgName>/$vnetRgName/g" main.json
+# #       sed -i -e "s/UbuntuServer/0001-com-ubuntu-server-jammy/g" main.json
+# #       sed -i -e "s/18.04-LTS/22_04-lts-gen2/g" main.json
+# #       sed -i -e "s/ubuntu1804/Ubuntu2204/g" main.json
+# #       sed -i -e "s/Standard_D1_v2/Standard_D4s_v3/g" main.json
+# #       sed -i -e "s/Standard_D1_v2/Standard_D4s_v3/g" main.json
+# #       sed -i -e "s/30/127/g" main.json
+      
+
+      
+
+# #       echo "*********************************main.json****************************************************"
+# #       cat main.json
+
+# #       sed -i -e "s/<subscriptionID>/$subscriptionID/g" aib-img.json
+# #       sed -i -e "s/<rgName>/$imageResourceGroup/g" aib-img.json
+      
+# #       # echo "********************************* aibRoleImageCreation.json****************************************************"
+# #       # cat aibRoleImageCreation.json
+
+# #       sed -i -e "s/<subscriptionID>/$subscriptionID/g" aib-net.json
+# #       sed -i -e "s/<vnetRgName>/$vnetRgName/g" aib-net.json
+
+# #       # echo "***********************************aibRoleNetworking.json**************************************************"
+# #       # cat aibRoleNetworking.json
+
+
+# #       echo "***********************************Imagebuilder-iden1**************************************************"
+# #       idenityName=Imagebuilder-iden0
+# #       az identity create -g $imageResourceGroup -n $idenityName
+
+# #       # # # get identity id
+# #       # # imgBuilderCliId=$(az identity show -g $imageResourceGroup -n $idenityName | grep "clientId" | cut -c16- | tr -d '",')
+
+# #       # # # # get the user identity URI, needed for the template
+# #       imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
+
+# #       # # # # # update the template
+# #       sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" main.json
+
+# #       # # # # # make role name unique, to avoid clashes in the same AAD Domain
+# #       imageRoleDefName="AIB-Deployer-00"
+# #       netRoleDefName="AIB-Net-Deployer-00"
+
+# #       # # # update the definitions
+# #       sed -i -e "s/Azure Image Builder Service Image Creation Role/$imageRoleDefName/g" aib-img.json
+# #       sed -i -e "s/Azure Image Builder Service Networking Role/$netRoleDefName/g" aib-net.json
+
+# #       echo "***********************************aib-net.json**************************************************"
+# #       cat aib-net.json
+
+# #       echo "*********************************aib-img.json****************************************************"
+# #       cat aib-img.json
+
+# #       # # # create role definitions
+# #       # az role definition create --role-definition ./aib-img.json
+# #       # az role definition create --role-definition ./aib-net.json
+
+# #       # grant role definition to the user assigned identity
+# #       az role assignment create \
+# #           --assignee-object-id 06340c1b-a7f4-4297-a72b-d5c223084acc \
+# #           --assignee-principal-type ServicePrincipal \
+# #           --role $imageRoleDefName \
+# #           --scope /subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup
+      
+
+# #       az role assignment create \
+# #           --assignee-object-id 06340c1b-a7f4-4297-a72b-d5c223084acc \
+# #           --assignee-principal-type ServicePrincipal \
+# #           --role $netRoleDefName \
+# #           --scope /subscriptions/$subscriptionID/resourceGroups/$vnetRgName
+      
+# #       az resource create \
+# #         --resource-group $imageResourceGroup \
+# #         --properties @main.json \
+# #         --is-full-object \
+# #         --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+# #         -n LinuxTemplateUbuntu2204-00
+
+
+# #       az resource invoke-action \
+# #         --resource-group $imageResourceGroup \
+# #         --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
+# #         -n LinuxTemplateUbuntu2204-00 \
+# #         --action Run 
+
+
+# #     displayName: 'Check for Registration'
+
+
+# - job: BuildGallery
+#   pool:
+#     vmImage: 'ubuntu-latest'
+#   # dependsOn: RoleAssignments  # Job2 depends on Job1
+#   # condition: succeeded()  # Job2 will run only if Job1 succeeds
+
+#   variables:
+#     # sigName: saasImagegallery
+#     # imageDefName: saasImgDef
+#     # runOutputName: saaslinuxsig
+#     # vnetRgName: rg-vnet-development-02
+#     # vnetName: vnetsbx-spoke02
+#     # subnetName: imgbuilder-subnet
+#     # location: canadacentral
+#     imagerg: rg-image-development
+#     # additionalregion: canadaeast
+#     identityName: Imagebuilder-iden0
+#   steps:
+#   - bash: |
+  
+#       az login --service-principal -u $(azure_client_id) -p $(azure_client_secret) --tenant $(azure_tenant_id)
+#       subscriptionId="$(az account list --query "[?name=='SBX Data Ecosystem-11'].id" --output tsv)"
+#       az account set --subscription $subscriptionId
+#       imgBuilderId=/subscriptions/$subscriptionId/resourcegroups/$(imagerg)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$(identityName)
+#       # create Image gallery
+#       # az sig create \
+#       #   -g $(imagerg) \
+#       #   --gallery-name $(sigName)
+
+#       # create the image definition from the image defbane
+#       # az sig image-definition create \
+#       #   -g $(imagerg) \
+#       #   --gallery-name $(sigName) \
+#       #   --gallery-image-definition $(imageDefName) \
+#       #   --publisher "Canonical" \
+#       #   --offer "0001-com-ubuntu-server-jammy" \
+#       #   --sku 22_04-lts-gen2 \
+#       #   --os-type Linux \
+#       #   --os-state Generalized \
+#       #   --architecture x64 
+      
+
+#       imageResourceGroup=rg-image-development
+#       sigResourceGroup=rg-image-development
+#       location=canadacentral
+#       imageName=customImageU2204
+#       runOutputName=aibCustLinManImg01ro
+#       vnetName=vnetsbx-spoke02
+#       subnetName='/subscriptions/eff8023d-71cc-4be2-bb62-46d0b7658eeb/resourceGroups/rg-vnet-development-02/providers/Microsoft.Network/virtualNetworks/vnetsbx-spoke02/subnets/imgbuilder-subnet'
+#       vnetRgName=rg-vnet-development-02
+#       nsgName=saasNSG01
+#       iden='/subscriptions/eff8023d-71cc-4be2-bb62-46d0b7658eeb/resourceGroups/rg-image-development/providers/Microsoft.ManagedIdentity/userAssignedIdentities/Imagebuilder-iden0'
+#       sigName=saasImagegallery
+#       subscriptionID=eff8023d-71cc-4be2-bb62-46d0b7658eeb
+#       imageDefName=saasImagedef1
+
+#       scripts="https://raw.githubusercontent.com/nelson2000/az-scripts/master/script2.sh"
+#       imagesource="Canonical:0001-com-ubuntu-server-jammy:22_04-lts-gen2:latest"
+
+#       # # shared image gallery
+
+#       # az sig image-definition create \
+#       #   -g $sigResourceGroup \
+#       #   --gallery-name $sigName \
+#       #   --gallery-image-definition $imageDefName \
+#       #   --publisher Canonical \
+#       #   --hyper-v-generation V2 \
+#       #   --offer '0001-com-ubuntu-server-jammy' \
+#       #   --sku 22_04-lts-gen2 \
+#       #   --os-type Linux
+
+#       # az image builder create --name LinuxTemplateUbuntu2204-01 \
+#       #     --resource-group $imageResourceGroup \
+#       #     --build-timeout 80 \
+#       #     --identity $iden \
+#       #     --image-source $imagesource \
+#       #     --location $location \
+#       #     --os-disk-size 0 \
+#       #     --proxy-vm-size Standard_D2ds_v4 \
+#       #     --scripts $scripts \
+#       #     --shared-image-destinations $sigName/$imageDefName=canadacentral,canadaeast \
+#       #     --subnet $subnetName \
+#       #     --tags Environment=Sandbox Admininstrator='Nelson Nwajie' Project=Retail-SaaS ImageType=Ubuntu22.04 \
+#       #     --vm-size Standard_D4s_v3 
+
+
+#       az sig image-version create --resource-group $sigResourceGroup \
+#           --gallery-name $sigName --gallery-image-definition $imageDefName \
+#           --gallery-image-version 1.0.0 --replica-count 1 \
+#           --storage-account-type Standard_LRS --managed-image customImageU2204 \
+#           --target-regions eastus2 canadacentral canadaeast
+
+#       # sed -i -e "s/<subscriptionID>/$subscriptionId/g" image-builder.json
+#       # sed -i -e "s/<rgName>/$(imagerg)/g" image-builder.json
+#       # sed -i -e "s/<imageDefName>/$(imageDefName)/g" image-builder.json
+#       # sed -i -e "s/<sharedImageGalName>/$(sigName)/g" image-builder.json
+#       # sed -i -e "s/<region>/$(location)/g" image-builder.json
+#       # sed -i -e "s/<region1>/$(location)/g" image-builder.json
+#       # sed -i -e "s/<imageName>/$(imageDefName)/g" image-builder.json
+#       # sed -i -e "s/<vnetRgName>/$(vnetRgName)/g" image-builder.json
+#       # sed -i -e "s/<region2>/$(additionalregion)/g" image-builder.json
+#       # sed -i -e "s/<runOutputName>/$(runOutputName)/g" image-builder.json
+#       # sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" image-builder.json
+#       # sed -i -e "s%<vnetName>%$(vnetName)%g" image-builder.json
+#       # sed -i -e "s%<subnetName>%$(subnetName)%g" image-builder.json
+#       # cat image-builder.json
+
+#       # az resource create \
+#       #   --resource-group $(imagerg) \
+#       #   --properties @image-builder.json \
+#       #   --is-full-object \
+#       #   --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+#       #   -n saasImageTemplate01
+      
+#       # az resource invoke-action \
+#       #   --resource-group $(imagerg) \
+#       #   --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
+#       #   -n saasImageTemplate01 \
+#       #   --action Run 
+
+#     displayName: 'Build Gallery'
+
+
+trigger: none 
+
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+- name: tagimg
+  displayName: 'tag for image'
+  type: string
+  default: '01'  # Default value (you can change it)
+  values:
+    - '01'
+    - '02'
+    - '03'
+    - '04'
+    - '05'
+ 
+- name: versiontag
+  displayName: 'tag for image'
+  type: string
+  default: '1.0.0'  # Default value (you can change it)
+  values:
+    - '1.0.0'
+    - '1.0.1'
+    - '1.0.2'
+    - '1.0.3'
+    - '1.0.4'
+    - '1.0.5'
+    - '1.0.6'
+
+jobs:
+# - job: UpdateImageTemplate
+#   pool:
+#     vmImage: 'ubuntu-latest'
+#   steps:
+#   - bash: |
+  
+#       imageResourceGroup=rg-image-development
+#       location=canadacentral
+#       imageName=LinuxImageU22-${{ parameters.tagimg }}
+#       runOutputName=aibCustLinManImg01ro
+#       vnetName=vnetsbx-spoke02
+#       subnetName=imgbuilder-subnet
+#       vnetRgName=rg-vnet-development-02
+#       idenityName=Imagebuilder-iden0
+#       tempname=LinuxTempUbuntu22-${{ parameters.tagimg }}
+
+    
+    
+#       az login --service-principal -u $(azure_client_id) -p $(azure_client_secret) --tenant $(azure_tenant_id)
+#       subscriptionID="$(az account list --query "[?name=='SBX Data Ecosystem-11'].id" --output tsv)"
+#       az account set --subscription $subscriptionID
+#       imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
+#       curl https://raw.githubusercontent.com/nelson2000/az-scripts/master/template.json -o main.json
+
+#       sed -i -e "s/<subscriptionID>/$subscriptionID/g" main.json
+#       sed -i -e "s/<rgName>/$imageResourceGroup/g" main.json
+#       sed -i -e "s/<region>/$location/g" main.json
+#       sed -i -e "s/<imageName>/$imageName/g" main.json
+#       sed -i -e "s/<runOutputName>/$runOutputName/g" main.json
+
+#       sed -i -e "s/<vnetName>/$vnetName/g" main.json
+#       sed -i -e "s/<subnetName>/$subnetName/g" main.json
+#       sed -i -e "s/<vnetRgName>/$vnetRgName/g" main.json
+
+#       sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" main.json
+
+#       echo "*********************************start main.json****************************************************"
+#       cat main.json
+#       echo "*********************************stop main.json****************************************************"
+#       az resource create \
+#           --resource-group $imageResourceGroup \
+#           --properties @main.json \
+#           --is-full-object \
+#           --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+#           -n $tempname
+
+
+#       az resource invoke-action \
+#         --resource-group $imageResourceGroup \
+#         --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
+#         -n $tempname \
+#         --action Run 
+
+      
+
+#     displayName: 'Check for Registration'
+
+
+
+
+- job: BuildGallery
+  pool:
+    vmImage: 'ubuntu-latest'
+  # dependsOn: RoleAssignments  # Job2 depends on Job1
+  # condition: succeeded()  # Job2 will run only if Job1 succeeds
+
+  variables:
+    imagerg: rg-image-development
+    sigName: larusImagegallery
+    identityName: Imagebuilder-iden0
+  steps:
+  - bash: |
+  
+      az login --service-principal -u $(azure_client_id) -p $(azure_client_secret) --tenant $(azure_tenant_id)
+      subscriptionId="$(az account list --query "[?name=='SBX Data Ecosystem-11'].id" --output tsv)"
+      az account set --subscription $subscriptionId
+      imgBuilderId=/subscriptions/$subscriptionId/resourcegroups/$(imagerg)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$(identityName)
+      # create Image gallery
+      az sig create \
+        -g $(imagerg) \
+        --gallery-name $(sigName)
+      # variables
+      tempname=LinuxTempUbuntu20-${{ parameters.tagimg }}
+      imageResourceGroup=rg-image-development
+      sigResourceGroup=rg-image-development
+      location=canadacentral
+      imageName=customImageU2204-01
+      runOutputName=aibCustLinManImg01ro
+      vnetName=vnetsbx-spoke02
+      subnetName='/subscriptions/eff8023d-71cc-4be2-bb62-46d0b7658eeb/resourceGroups/rg-vnet-development-02/providers/Microsoft.Network/virtualNetworks/vnetsbx-spoke02/subnets/imgbuilder-subnet'
+      vnetRgName=rg-vnet-development-02
+      iden='/subscriptions/eff8023d-71cc-4be2-bb62-46d0b7658eeb/resourceGroups/rg-image-development/providers/Microsoft.ManagedIdentity/userAssignedIdentities/Imagebuilder-iden0'
+      sigName=larusImagegallery
+      subscriptionID=eff8023d-71cc-4be2-bb62-46d0b7658eeb
+      imageDefName=larusImagedef1-${{ parameters.tagimg }}
+      scripts="https://raw.githubusercontent.com/nelson2000/az-scripts/master/script2.sh"
+      imagesource="Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:latest"
+
+      # create shared image gallery sig definition
+
+      az sig image-definition create \
+        -g $sigResourceGroup \
+        --gallery-name $sigName \
+        --gallery-image-definition $imageDefName \
+        --publisher Canonical \
+        --hyper-v-generation V2 \
+        --offer '0001-com-ubuntu-server-focal' \
+        --sku 20_04-lts-gen2 \
+        --os-type Linux
+
+      # build image
+      az image builder create --name $tempname \
+          --resource-group $imageResourceGroup \
+          --build-timeout 80 \
+          --identity $iden \
+          --image-source $imagesource \
+          --location $location \
+          --os-disk-size 0 \
+          --proxy-vm-size Standard_D2ds_v4 \
+          --scripts $scripts \
+          --shared-image-destinations $sigName/$imageDefName=canadacentral,canadaeast \
+          --subnet $subnetName \
+          --tags Environment=Sandbox Admininstrator='Nelson Nwajie' Project=Retail-SaaS ImageType=Ubuntu20.04 \
+          --vm-size Standard_D4s_v3 
+
+      # version and share
+      az sig image-version create --resource-group $sigResourceGroup \
+          --gallery-name $sigName \
+          --gallery-image-definition $imageDefName \
+          --gallery-image-version ${{ parameters.versiontag }} \
+          --replica-count 1 \
+          --storage-account-type Standard_LRS \
+          --managed-image $imageName \
+          --target-regions eastus2 canadacentral canadaeast
+
+      # sed -i -e "s/<subscriptionID>/$subscriptionId/g" image-builder.json
+      # sed -i -e "s/<rgName>/$(imagerg)/g" image-builder.json
+      # sed -i -e "s/<imageDefName>/$(imageDefName)/g" image-builder.json
+      # sed -i -e "s/<sharedImageGalName>/$(sigName)/g" image-builder.json
+      # sed -i -e "s/<region>/$(location)/g" image-builder.json
+      # sed -i -e "s/<region1>/$(location)/g" image-builder.json
+      # sed -i -e "s/<imageName>/$(imageDefName)/g" image-builder.json
+      # sed -i -e "s/<vnetRgName>/$(vnetRgName)/g" image-builder.json
+      # sed -i -e "s/<region2>/$(additionalregion)/g" image-builder.json
+      # sed -i -e "s/<runOutputName>/$(runOutputName)/g" image-builder.json
+      # sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" image-builder.json
+      # sed -i -e "s%<vnetName>%$(vnetName)%g" image-builder.json
+      # sed -i -e "s%<subnetName>%$(subnetName)%g" image-builder.json
+      # cat image-builder.json
+
+      # az resource create \
+      #   --resource-group $(imagerg) \
+      #   --properties @image-builder.json \
+      #   --is-full-object \
+      #   --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+      #   -n saasImageTemplate01
+      
+      # az resource invoke-action \
+      #   --resource-group $(imagerg) \
+      #   --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
+      #   -n saasImageTemplate01 \
+      #   --action Run 
+
+    displayName: 'Build Gallery'
+

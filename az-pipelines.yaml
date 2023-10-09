@@ -1,0 +1,85 @@
+trigger: none 
+
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+- name: tagimg
+  displayName: 'tag for image'
+  type: string
+  default: '01'  # Default value (you can change it)
+  values:
+    - '02'
+    - '03'
+    - '04'
+    - '05'
+ 
+- name: versiontag
+  displayName: 'tag for image'
+  type: string
+  default: '1.0.0'  # Default value (you can change it)
+  values:
+    - '1.0.1'
+    - '1.0.2'
+    - '1.0.3'
+    - '1.0.4'
+    - '1.0.5'
+    - '1.0.6'
+
+jobs:
+- job: UpdateImageTemplate
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - bash: |
+  
+      imageResourceGroup=rg-image-development
+      location=canadacentral
+      imageName=LinuxImageU22-{{ parameters.tagimg }}
+      runOutputName=aibCustLinManImg01ro
+      vnetName=vnetsbx-spoke02
+      subnetName=imgbuilder-subnet
+      vnetRgName=rg-vnet-development-02
+      idenityName=Imagebuilder-iden0
+
+    
+    
+      az login --service-principal -u $(azure_client_id) -p $(azure_client_secret) --tenant $(azure_tenant_id)
+      subscriptionID="$(az account list --query "[?name=='SBX Data Ecosystem-11'].id" --output tsv)"
+      az account set --subscription $subscriptionID
+      imgBuilderId=/subscriptions/$subscriptionID/resourcegroups/$imageResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$idenityName
+      curl https://raw.githubusercontent.com/nelson2000/az-scripts/master/template.json -o main.json
+
+      sed -i -e "s/<subscriptionID>/$subscriptionID/g" main.json
+      sed -i -e "s/<rgName>/$imageResourceGroup/g" main.json
+      sed -i -e "s/<region>/$location/g" main.json
+      sed -i -e "s/<imageName>/$imageName/g" main.json
+      sed -i -e "s/<runOutputName>/$runOutputName/g" main.json
+
+      sed -i -e "s/<vnetName>/$vnetName/g" main.json
+      sed -i -e "s/<subnetName>/$subnetName/g" main.json
+      sed -i -e "s/<vnetRgName>/$vnetRgName/g" main.json
+
+      sed -i -e "s%<imgBuilderId>%$imgBuilderId%g" main.json
+
+      echo "*********************************main.json****************************************************"
+      cat main.json
+
+      az resource create \
+          --resource-group $imageResourceGroup \
+          --properties @main.json \
+          --is-full-object \
+          --resource-type Microsoft.VirtualMachineImages/imageTemplates \
+          -n LinuxTempUbuntu22-{{ parameters.tagimg }}
+
+
+      az resource invoke-action \
+        --resource-group $imageResourceGroup \
+        --resource-type  Microsoft.VirtualMachineImages/imageTemplates \
+        -n LinuxTempUbuntu22-{{ parameters.tagimg }} \
+        --action Run 
+
+      
+
+    displayName: 'Check for Registration'

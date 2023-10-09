@@ -37,7 +37,7 @@ sudo apt install git curl wget nano -y
 git config --global user.name "Larus Corp"
 git config --global user.email admin@larus.com
 
-mkdir -p /home/manifest
+sudo mkdir -p /home/manifest
 
 git clone https://github.com/nelson2000/manifests_1.6v_stable.git /home/manifest
 
