@@ -1,7 +1,7 @@
 {
     "type": "Microsoft.VirtualMachineImages/imageTemplates",
     "apiVersion": "2020-02-14",
-    "location": "<region>",
+    "location": "canadacentral",
     "dependsOn": [],
     "tags": {
         "imagebuilderTemplate": "AzureVMImageBuilderVNET",
@@ -20,8 +20,8 @@
         
         "vmProfile": 
             {
-            "vmSize": "Standard_D1_v2",
-            "osDiskSizeGB": 30,
+            "vmSize": "Standard_D4s_v3",
+            "osDiskSizeGB": 128,
             "vnetConfig": {
                 "subnetId": "/subscriptions/<subscriptionID>/resourceGroups/<vnetRgName>/providers/Microsoft.Network/virtualNetworks/<vnetName>/subnets/<subnetName>"
                 }
@@ -46,26 +46,11 @@
 
             {
                 "type": "Shell",
-                "name": "CheckSumCompareShellScript",
-                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript2.sh",
-                "sha256Checksum": "ade4c5214c3c675e92c66e2d067a870c5b81b9844b3de3cc72c49ff36425fc93"
+                "name": "RunScriptFromSource2",
+                "scriptUri": "https://raw.githubusercontent.com/nelson2000/az-scripts/master/script2.sh",
             },
-            
-            {
-                "type": "File",
-                "name": "downloadBuildArtifacts",
-                "sourceUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/exampleArtifacts/buildArtifacts/index.html",
-                "destination":"/tmp/index.html"
-            },
-
-            {
-                "type": "Shell",
-                "name": "setupBuildPath",
-                "inline": [
-                    "sudo mkdir /buildArtifacts",
-                    "sudo cp /tmp/index.html /buildArtifacts/index.html"
-                ]
-            },
+     
+         
 
             {
                 "type": "Shell",
@@ -81,7 +66,7 @@
             [
                 {   "type":"ManagedImage",
                     "imageId": "/subscriptions/<subscriptionID>/resourceGroups/<rgName>/providers/Microsoft.Compute/images/<imageName>",
-                    "location": "<region>",
+                    "location": "canadacentral",
                     "runOutputName": "<runOutputName>",
                     "artifactTags": {
                         "source": "azVmImageBuilder",
