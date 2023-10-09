@@ -41,7 +41,7 @@
             {
                 "type": "Shell",
                 "name": "RunScriptFromSource",
-                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/customizeScript.sh"
+                "scriptUri": "https://raw.githubusercontent.com/nelson2000/az-scripts/master/script1.sh"
             },
 
             {
