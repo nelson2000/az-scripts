@@ -47,7 +47,7 @@
             {
                 "type": "Shell",
                 "name": "RunScriptFromSource2",
-                "scriptUri": "https://raw.githubusercontent.com/nelson2000/az-scripts/master/script2.sh",
+                "scriptUri": "https://raw.githubusercontent.com/nelson2000/az-scripts/master/script2.sh"
             },
      
          
