@@ -29,12 +29,12 @@
 
         
 
-        "source": {
+      "source": {
             "type": "PlatformImage",
                 "publisher": "Canonical",
-                "offer": "0001-com-ubuntu-server-jammy",
-                "sku": "22_04-lts-gen2",
-                "version": "1.0.0"
+                "offer": "0001-com-ubuntu-server-focal",
+                "sku": "20_04-lts-gen2",
+                "version": "latest"
             
         },
         "customize": [
@@ -47,7 +47,7 @@
             {
                 "type": "Shell",
                 "name": "RunScriptFromSource2",
-                "scriptUri": "https://raw.githubusercontent.com/nelson2000/az-scripts/master/script2.sh",
+                "scriptUri": "https://raw.githubusercontent.com/nelson2000/az-scripts/master/script2.sh"
             },
      
          
